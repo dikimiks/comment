@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Проект "Комменты"</title>
-    <meta charset="utf-8" />
     <link rel="stylesheet" href="styles.css" />
   </head>
-
   <body>
     <div class="container">
       <ul class="comments" id="comments-list"></ul>
+
       <div class="add-form">
         <input
           type="text"
@@ -23,106 +24,13 @@
           rows="4"
         ></textarea>
         <div class="add-form-row">
-          <button class="add-form-button" id="add-comment-button">Написать</button>
+          <button class="add-form-button" id="add-comment-button">
+            Написать
+          </button>
         </div>
       </div>
     </div>
+
+    <script type="module" src="./js/main.js"></script>
   </body>
-
-  <script>
-    "use strict";
-
-    const comments = [
-      {
-        name: "Глеб Фокин",
-        text: "Это будет первый комментарий на этой странице",
-        date: "12.02.22 12:18",
-        likes: 3,
-        isLiked: false
-      },
-      {
-        name: "Варвара Н.",
-        text: "Мне нравится как оформлена эта страница! ❤",
-        date: "13.02.22 19:22",
-        likes: 75,
-        isLiked: true
-      }
-    ];
-
-    const commentsList = document.getElementById("comments-list");
-    const nameInput = document.getElementById("name-input");
-    const commentInput = document.getElementById("comment-input");
-    const addCommentButton = document.getElementById("add-comment-button");
-
-    function sanitizeHTML(str) {
-      return str.replaceAll("<", "&lt;").replaceAll(">", "&gt;");
-    }
-
-    function renderComments() {
-      commentsList.innerHTML = comments
-        .map((comment, index) => `
-          <li class="comment" data-index="${index}">
-            <div class="comment-header">
-              <div>${comment.name}</div>
-              <div>${comment.date}</div>
-            </div>
-            <div class="comment-body">
-              <div class="comment-text">${comment.text}</div>
-            </div>
-            <div class="comment-footer">
-              <div class="likes">
-                <span class="likes-counter">${comment.likes}</span>
-                <button class="like-button ${comment.isLiked ? "-active-like" : ""}" data-index="${index}"></button>
-              </div>
-            </div>
-          </li>
-        `)
-        .join("");
-    }
-
-    function addComment() {
-      const name = sanitizeHTML(nameInput.value.trim());
-      const text = sanitizeHTML(commentInput.value.trim());
-      
-      if (!name || !text) {
-        alert("Пожалуйста, введите имя и комментарий");
-        return;
-      }
-      
-      const currentDate = new Date();
-      const formattedDate = `${currentDate.getDate().toString().padStart(2, '0')}.${(currentDate.getMonth() + 1).toString().padStart(2, '0')}.${currentDate.getFullYear().toString().slice(2)} ${currentDate.getHours().toString().padStart(2, '0')}:${currentDate.getMinutes().toString().padStart(2, '0')}`;
-      
-      comments.push({ name, text, date: formattedDate, likes: 0, isLiked: false });
-      nameInput.value = "";
-      commentInput.value = "";
-      renderComments();
-    }
-
-    function toggleLike(event) {
-      if (!event.target.classList.contains("like-button")) return;
-      
-      const index = event.target.dataset.index;
-      comments[index].isLiked = !comments[index].isLiked;
-      comments[index].likes += comments[index].isLiked ? 1 : -1;
-      
-      renderComments();
-    }
-
-    function quoteComment(event) {
-      const commentElement = event.target.closest(".comment");
-      if (!commentElement || event.target.classList.contains("like-button")) return;
-      
-      const index = commentElement.dataset.index;
-      const comment = comments[index];
-      
-      commentInput.value = `> ${comment.text}\n${commentInput.value}`;
-    }
-
-    addCommentButton.addEventListener("click", addComment);
-    commentsList.addEventListener("click", toggleLike);
-    commentsList.addEventListener("click", quoteComment);
-
-    renderComments();
-  </script>
 </html>
-

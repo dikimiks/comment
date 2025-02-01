@@ -1,4 +1,4 @@
-import { addComment, toggleLike } from "./comments.js";
+import { addComment, toggleLike, comments } from "./comments.js";
 import { renderComments } from "./render.js";
 import { sanitize } from "./sanitize.js";
 
@@ -22,6 +22,7 @@ export function addEventListeners() {
   });
 
   addLikeEventListeners();
+  addReplyListeners(); 
 }
 
 export function addLikeEventListeners() {
@@ -35,14 +36,17 @@ export function addLikeEventListeners() {
   });
 }
 
-
 export function addReplyListeners() {
   document.querySelectorAll(".comment").forEach((comment) => {
     comment.addEventListener("click", (event) => {
       if (event.target.classList.contains("like-button")) return;
       const index = event.currentTarget.dataset.index;
       const textInput = document.getElementById("comment-input");
-      textInput.value = `> ${comments[index].text}\n`;
+
+      if (comments[index]) {
+        textInput.value = `> ${comments[index].text}\n`;
+      }
     });
   });
 }
+

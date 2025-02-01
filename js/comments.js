@@ -37,6 +37,11 @@ export async function loadComments() {
 
 
 export async function addComment(author, text) {
+  if (author.length < 3 || text.length < 3) {
+    alert("Имя и комментарий должны быть не короче 3 символов");
+    return;
+  }
+
   const addForm = document.getElementById("add-form");
   const commentLoadingMessage = document.getElementById("comment-loading-message");
   const addButton = document.getElementById("add-comment-button");
@@ -50,9 +55,6 @@ export async function addComment(author, text) {
     if (newComment) {
       await loadComments(); 
     }
-  } catch (error) {
-    console.error("Ошибка при добавлении комментария:", error);
-    commentLoadingMessage.textContent = "Ошибка при добавлении комментария";
   } finally {
     addForm.style.display = "block"; 
     commentLoadingMessage.style.display = "none"; 
@@ -68,3 +70,5 @@ export function toggleLike(index) {
     comment.likes += comment.isLiked ? 1 : -1;
   }
 }
+
+

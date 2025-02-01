@@ -1,4 +1,4 @@
-import { addComment, toggleLike, comments } from "./comments.js";
+import { addComment, toggleLike } from "./comments.js";
 import { renderComments } from "./render.js";
 import { sanitize } from "./sanitize.js";
 
@@ -22,7 +22,6 @@ export function addEventListeners() {
   });
 
   addLikeEventListeners();
-  addReplyListeners();
 }
 
 export function addLikeEventListeners() {
@@ -35,6 +34,7 @@ export function addLikeEventListeners() {
     });
   });
 }
+
 
 export function addReplyListeners() {
   document.querySelectorAll(".comment").forEach((comment) => {

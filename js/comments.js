@@ -1,4 +1,7 @@
-export const comments = [
+import { fetchComments, postComment } from "./api.js";
+import { renderComments } from "./render.js";
+
+export let comments = [
   {
     author: "Глеб Фокин",
     text: "Это будет первый комментарий на этой странице",
@@ -15,15 +18,21 @@ export const comments = [
   },
 ];
 
-export function addComment(author, text) {
-  comments.push({
-    author,
-    text,
-    date: new Date().toLocaleString("ru-RU"),
-    likes: 0,
-    isLiked: false,
-  });
+
+export async function loadComments() {
+  const apiComments = await fetchComments();
+  comments = [...comments, ...apiComments];
 }
+
+
+export async function addComment(author, text) {
+  const newComment = await postComment(author, text);
+  if (newComment) {
+    await loadComments();
+    renderComments(); 
+  }
+}
+
 
 export function toggleLike(index) {
   const comment = comments[index];
@@ -33,4 +42,4 @@ export function toggleLike(index) {
   }
 }
 
-  
+

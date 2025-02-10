@@ -1,28 +1,34 @@
-import { addComment, toggleLike, comments } from "./comments.js";
-import { renderComments } from "./render.js";
-import { sanitize } from "./sanitize.js";
+
+
+document.addEventListener("DOMContentLoaded", () => {
+  const authLink = document.getElementById("auth-link");
+
+  authLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    const loginContainer = document.getElementById("login-container");
+    loginContainer.style.display = "block";
+  });
+});
+
 
 export function addEventListeners() {
   const addButton = document.getElementById("add-comment-button");
-  const nameInput = document.getElementById("name-input");
   const commentInput = document.getElementById("comment-input");
 
-  if (!addButton || !nameInput || !commentInput) {
+  if (!addButton || !commentInput) {
     console.error("Ошибка: один из элементов формы не найден!");
     return;
   }
 
   addButton.addEventListener("click", () => {
-    if (nameInput.value.trim() && commentInput.value.trim()) {
-      addComment(sanitize(nameInput.value), sanitize(commentInput.value));
-      nameInput.value = "";
+    if (commentInput.value.trim()) {
+      addComment(commentInput.value.trim());
       commentInput.value = "";
       renderComments();
     }
   });
-
-  addLikeEventListeners();
 }
+
 
 export function addLikeEventListeners() {
   document.querySelectorAll(".like-button").forEach((button) => {
@@ -34,6 +40,7 @@ export function addLikeEventListeners() {
     });
   });
 }
+
 
 export function addReplyListeners() {
   document.querySelectorAll(".comment").forEach((comment) => {
@@ -48,4 +55,3 @@ export function addReplyListeners() {
     });
   });
 }
-

@@ -1,5 +1,6 @@
 import { fetchComments, postComment } from "./api.js";
 import { renderComments } from "./render.js";
+import { getCurrentUser } from "./auth.js";
 
 export let comments = [
   {
@@ -21,24 +22,29 @@ export let comments = [
 
 export async function loadComments() {
   const loadingMessage = document.getElementById("loading-message");
-  loadingMessage.style.display = "block"; 
+  loadingMessage.style.display = "block";
 
   try {
-    const apiComments = await fetchComments();
-    comments = [...comments, ...apiComments];
+    comments = await fetchComments();
     renderComments();
   } catch (error) {
     console.error("Ошибка при загрузке комментариев:", error);
     loadingMessage.textContent = "Ошибка загрузки комментариев";
   } finally {
-    loadingMessage.style.display = "none"; 
+    loadingMessage.style.display = "none";
   }
 }
 
 
-export async function addComment(author, text) {
-  if (author.length < 3 || text.length < 3) {
-    alert("Имя и комментарий должны быть не короче 3 символов");
+export async function addComment(text) {
+  const user = getCurrentUser();
+  if (!user) {
+    alert("Сначала авторизуйтесь!");
+    return;
+  }
+
+  if (text.length < 3) {
+    alert("Комментарий должен быть не короче 3 символов");
     return;
   }
 
@@ -46,29 +52,25 @@ export async function addComment(author, text) {
   const commentLoadingMessage = document.getElementById("comment-loading-message");
   const addButton = document.getElementById("add-comment-button");
 
-  addForm.style.display = "none"; 
-  commentLoadingMessage.style.display = "block"; 
-  addButton.disabled = true; 
+  addForm.style.display = "none";
+  commentLoadingMessage.style.display = "block";
+  addButton.disabled = true;
 
   try {
-    const newComment = await postComment(author, text);
-    if (newComment) {
-      await loadComments(); 
-    }
+    await postComment(text);
+    await loadComments();
   } finally {
-    addForm.style.display = "block"; 
-    commentLoadingMessage.style.display = "none"; 
-    addButton.disabled = false; 
+    addForm.style.display = "block";
+    commentLoadingMessage.style.display = "none";
+    addButton.disabled = false;
   }
 }
 
 
 export function toggleLike(index) {
-  const comment = comments[index];
-  if (comment) {
-    comment.isLiked = !comment.isLiked;
-    comment.likes += comment.isLiked ? 1 : -1;
-  }
+  if (!comments[index]) return;
+
+  comments[index].isLiked = !comments[index].isLiked;
+  comments[index].likes += comments[index].isLiked ? 1 : -1;
+  renderComments();
 }
-
-

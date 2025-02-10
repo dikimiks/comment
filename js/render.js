@@ -2,47 +2,6 @@ import { comments } from "./comments.js";
 import { addLikeEventListeners, addReplyListeners } from "./eventHandlers.js";
 import { getCurrentUser } from "./auth.js";
 
-export function showCommentsUI() {
-  const authMessage = document.getElementById("auth-message");
-  const commentsContainer = document.getElementById("comments-container");
-  const addForm = document.getElementById("add-form");
-  const loginContainer = document.getElementById("login-container");
-  const registerContainer = document.getElementById("register-container");
-
-  authMessage.style.display = "none";
-  loginContainer.style.display = "none";
-  registerContainer.style.display = "none";
-  commentsContainer.style.display = "block";
-  addForm.style.display = "block";
-}
-
-
-export function showLoginForm() {
-  const loginContainer = document.getElementById("login-container");
-  loginContainer.style.display = "block";
-}
-
-
-export function showRegisterForm() {
-  const registerContainer = document.getElementById("register-container");
-  registerContainer.style.display = "block";
-}
-
-export function showAuthMessage() {
-  const authMessage = document.getElementById("auth-message");
-  const commentsContainer = document.getElementById("comments-container");
-  const addForm = document.getElementById("add-form");
-  const loginContainer = document.getElementById("login-container");
-  const registerContainer = document.getElementById("register-container");
-
-  authMessage.style.display = "block";
-  commentsContainer.style.display = "block";
-  addForm.style.display = "none";
-  loginContainer.style.display = "none";
-  registerContainer.style.display = "none";
-}
-
-
 export function renderComments() {
   const commentsList = document.getElementById("comments-list");
 
@@ -52,8 +11,7 @@ export function renderComments() {
   }
 
   commentsList.innerHTML = comments
-    .map(
-      (comment, index) => `
+    .map((comment, index) => `
         <li class="comment" data-index="${index}">
           <div class="comment-header">
             <div class="comment-author">${comment.author}</div>
@@ -68,15 +26,14 @@ export function renderComments() {
               <button class="like-button ${comment.isLiked ? "-active-like" : ""}" data-index="${index}"></button>
             </div>
           </div>
-        </li>`
-    )
+        </li>
+      `)
     .join("");
 
   addLikeEventListeners();
   addReplyListeners();
   renderCommentForm();
 }
-
 
 export function renderCommentForm() {
   const container = document.querySelector(".container");
@@ -96,7 +53,8 @@ export function renderCommentForm() {
           <button class="add-form-button" id="add-comment-button">Написать</button>
         </div>
       </div>
-      <p id="comment-loading-message" style="display: none">Комментарий добавляется...</p>`
+      <p id="comment-loading-message" style="display: none">Комментарий добавляется...</p> 
+    `
     : `<p id="comment-form-container" class="login-message">Чтобы добавить комментарий, <a href="#" id="login-link">авторизуйтесь</a></p>`;
 
   container.insertAdjacentHTML("beforeend", formHtml);
@@ -107,4 +65,19 @@ export function renderCommentForm() {
       showLoginForm();
     });
   }
+}
+
+
+export function showLoginForm() {
+  document.getElementById("auth-message").style.display = "none";
+  document.getElementById("comments-container").style.display = "none";
+  document.getElementById("login-container").style.display = "block";
+  document.getElementById("register-container").style.display = "none";
+}
+
+export function showRegisterForm() {
+  document.getElementById("auth-message").style.display = "none";
+  document.getElementById("comments-container").style.display = "none";
+  document.getElementById("login-container").style.display = "none";
+  document.getElementById("register-container").style.display = "block";
 }

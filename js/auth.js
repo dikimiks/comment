@@ -1,6 +1,5 @@
 let currentUser = null;
 
-
 export function getCurrentUser() {
   if (!currentUser) {
     const savedUser = localStorage.getItem("user");
@@ -10,7 +9,6 @@ export function getCurrentUser() {
   }
   return currentUser;
 }
-
 
 export function checkAuth() {
   return localStorage.getItem("token") !== null;

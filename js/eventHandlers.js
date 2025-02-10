@@ -1,15 +1,5 @@
-
-
-document.addEventListener("DOMContentLoaded", () => {
-  const authLink = document.getElementById("auth-link");
-
-  authLink.addEventListener("click", (event) => {
-    event.preventDefault();
-    const loginContainer = document.getElementById("login-container");
-    loginContainer.style.display = "block";
-  });
-});
-
+import { addComment, toggleLike } from "./comments.js";
+import { renderComments } from "./render.js";
 
 export function addEventListeners() {
   const addButton = document.getElementById("add-comment-button");
@@ -29,7 +19,6 @@ export function addEventListeners() {
   });
 }
 
-
 export function addLikeEventListeners() {
   document.querySelectorAll(".like-button").forEach((button) => {
     button.addEventListener("click", (event) => {
@@ -40,7 +29,6 @@ export function addLikeEventListeners() {
     });
   });
 }
-
 
 export function addReplyListeners() {
   document.querySelectorAll(".comment").forEach((comment) => {

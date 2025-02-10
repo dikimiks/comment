@@ -1,7 +1,6 @@
 const PERSONAL_KEY = "polina-rebrova";
 const API_URL = `https://wedev-api.sky.pro/api/v2/${PERSONAL_KEY}/comments`;
-const AUTH_URL = "https://wedev-api.sky.pro/api/user";
-
+const AUTH_URL = "https://wedev-api.sky.pro/api/v2//user";
 
 export async function fetchComments() {
   try {
@@ -21,7 +20,6 @@ export async function fetchComments() {
     return [];
   }
 }
-
 
 export async function postComment(text) {
   const token = localStorage.getItem("token");
@@ -45,7 +43,6 @@ export async function postComment(text) {
   }
 }
 
-
 export async function login(login, password) {
   return fetch(AUTH_URL + "/login", {
     method: "POST",
@@ -53,7 +50,6 @@ export async function login(login, password) {
     body: JSON.stringify({ login, password }),
   });
 }
-
 
 export async function registration(name, login, password) {
   return fetch(AUTH_URL, {

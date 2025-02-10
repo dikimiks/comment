@@ -2,23 +2,7 @@ import { fetchComments, postComment } from "./api.js";
 import { renderComments } from "./render.js";
 import { getCurrentUser } from "./auth.js";
 
-export let comments = [
-  {
-    author: "Глеб Фокин",
-    text: "Это будет первый комментарий на этой странице",
-    date: "12.02.22 12:18",
-    likes: 3,
-    isLiked: false,
-  },
-  {
-    author: "Варвара Н.",
-    text: "Мне нравится как оформлена эта страница! ❤",
-    date: "13.02.22 19:22",
-    likes: 75,
-    isLiked: true,
-  },
-];
-
+export let comments = [];
 
 export async function loadComments() {
   const loadingMessage = document.getElementById("loading-message");
@@ -34,7 +18,6 @@ export async function loadComments() {
     loadingMessage.style.display = "none";
   }
 }
-
 
 export async function addComment(text) {
   const user = getCurrentUser();
@@ -65,7 +48,6 @@ export async function addComment(text) {
     addButton.disabled = false;
   }
 }
-
 
 export function toggleLike(index) {
   if (!comments[index]) return;

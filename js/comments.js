@@ -1,4 +1,7 @@
-export const comments = [
+import { fetchComments, postComment } from "./api.js";
+import { renderComments } from "./render.js";
+
+export let comments = [
   {
     author: "Глеб Фокин",
     text: "Это будет первый комментарий на этой странице",
@@ -15,15 +18,48 @@ export const comments = [
   },
 ];
 
-export function addComment(author, text) {
-  comments.push({
-    author,
-    text,
-    date: new Date().toLocaleString("ru-RU"),
-    likes: 0,
-    isLiked: false,
-  });
+
+export async function loadComments() {
+  const loadingMessage = document.getElementById("loading-message");
+  loadingMessage.style.display = "block"; 
+
+  try {
+    const apiComments = await fetchComments();
+    comments = [...comments, ...apiComments];
+    renderComments();
+  } catch (error) {
+    console.error("Ошибка при загрузке комментариев:", error);
+    loadingMessage.textContent = "Ошибка загрузки комментариев";
+  } finally {
+    loadingMessage.style.display = "none"; 
+  }
 }
+
+
+export async function addComment(author, text) {
+  const addForm = document.getElementById("add-form");
+  const commentLoadingMessage = document.getElementById("comment-loading-message");
+  const addButton = document.getElementById("add-comment-button");
+
+  addForm.style.display = "none"; 
+  commentLoadingMessage.style.display = "block"; 
+  addButton.disabled = true; 
+
+  try {
+    const newComment = await postComment(author, text);
+    if (newComment) {
+      await loadComments(); 
+    }
+  } catch (error) {
+    console.error("Ошибка при добавлении комментария:", error);
+    commentLoadingMessage.textContent = "Ошибка при добавлении комментария";
+  } finally {
+    addForm.style.display = "block"; 
+    commentLoadingMessage.style.display = "none"; 
+    addButton.disabled = false; 
+  }
+}
+
 
 export function toggleLike(index) {
   const comment = comments[index];
@@ -32,5 +68,3 @@ export function toggleLike(index) {
     comment.likes += comment.isLiked ? 1 : -1;
   }
 }
-
-  

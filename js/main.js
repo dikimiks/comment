@@ -1,7 +1,8 @@
 import { renderComments } from "./render.js";
 import { addEventListeners } from "./eventHandlers.js";
+import { loadComments } from "./comments.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  renderComments();
-  addEventListeners();
+document.addEventListener("DOMContentLoaded", async () => {
+  await loadComments(); 
+  addEventListeners(); 
 });

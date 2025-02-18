@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
@@ -8,28 +8,19 @@
   </head>
   <body>
     <div class="container">
+      <p id="loading-message">Загрузка комментариев...</p> 
       <ul class="comments" id="comments-list"></ul>
-
-      <div class="add-form">
-        <input
-          type="text"
-          class="add-form-name"
-          id="name-input"
-          placeholder="Введите ваше имя"
-        />
-        <textarea
-          class="add-form-text"
-          id="comment-input"
-          placeholder="Введите ваш комментарий"
-          rows="4"
-        ></textarea>
+    
+      <div class="add-form" id="add-form">
+        <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
+        <textarea class="add-form-text" id="comment-input" placeholder="Введите ваш комментарий" rows="4"></textarea>
         <div class="add-form-row">
-          <button class="add-form-button" id="add-comment-button">
-            Написать
-          </button>
+          <button class="add-form-button" id="add-comment-button">Написать</button>
         </div>
       </div>
+      <p id="comment-loading-message" style="display: none">Комментарий добавляется...</p> 
     </div>
+    
 
     <script type="module" src="./js/main.js"></script>
   </body>

@@ -22,7 +22,7 @@ export function addEventListeners() {
   });
 
   addLikeEventListeners();
-  addReplyListeners();
+  addReplyListeners(); 
 }
 
 export function addLikeEventListeners() {
@@ -42,7 +42,11 @@ export function addReplyListeners() {
       if (event.target.classList.contains("like-button")) return;
       const index = event.currentTarget.dataset.index;
       const textInput = document.getElementById("comment-input");
-      textInput.value = `> ${comments[index].text}\n`;
+
+      if (comments[index]) {
+        textInput.value = `> ${comments[index].text}\n`;
+      }
     });
   });
 }
+

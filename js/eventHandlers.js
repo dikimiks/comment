@@ -22,7 +22,6 @@ export function addEventListeners() {
   });
 
   addLikeEventListeners();
-  addReplyListeners(); 
 }
 
 export function addLikeEventListeners() {

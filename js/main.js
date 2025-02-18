@@ -3,6 +3,6 @@ import { addEventListeners } from "./eventHandlers.js";
 import { loadComments } from "./comments.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
-  await loadComments(); 
-  addEventListeners(); 
+  await loadComments();
+  addEventListeners();
 });

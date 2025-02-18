@@ -1,27 +1,22 @@
-import { addComment, toggleLike, comments } from "./comments.js";
+import { addComment, toggleLike } from "./comments.js";
 import { renderComments } from "./render.js";
-import { sanitize } from "./sanitize.js";
 
 export function addEventListeners() {
   const addButton = document.getElementById("add-comment-button");
-  const nameInput = document.getElementById("name-input");
   const commentInput = document.getElementById("comment-input");
 
-  if (!addButton || !nameInput || !commentInput) {
+  if (!addButton || !commentInput) {
     console.error("Ошибка: один из элементов формы не найден!");
     return;
   }
 
   addButton.addEventListener("click", () => {
-    if (nameInput.value.trim() && commentInput.value.trim()) {
-      addComment(sanitize(nameInput.value), sanitize(commentInput.value));
-      nameInput.value = "";
+    if (commentInput.value.trim()) {
+      addComment(commentInput.value.trim());
       commentInput.value = "";
       renderComments();
     }
   });
-
-  addLikeEventListeners();
 }
 
 export function addLikeEventListeners() {
@@ -48,4 +43,3 @@ export function addReplyListeners() {
     });
   });
 }
-

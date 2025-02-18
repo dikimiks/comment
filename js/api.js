@@ -1,15 +1,13 @@
-const PERSONAL_KEY = "polina-rebrova"; 
-const API_URL = `https://wedev-api.sky.pro/api/v1/${PERSONAL_KEY}/comments`;
-
+const PERSONAL_KEY = "polina-rebrova";
+const API_URL = `https://wedev-api.sky.pro/api/v2/${PERSONAL_KEY}/comments`;
+const AUTH_URL = "https://wedev-api.sky.pro/api/v2//user";
 
 export async function fetchComments() {
   try {
     const response = await fetch(API_URL);
-    if (!response.ok) {
-      throw new Error("Ошибка загрузки комментариев");
-    }
-    const data = await response.json();
+    if (!response.ok) throw new Error("Ошибка загрузки комментариев");
 
+    const data = await response.json();
     return data.comments.map((comment) => ({
       author: comment.author.name,
       text: comment.text,
@@ -18,45 +16,45 @@ export async function fetchComments() {
       isLiked: comment.isLiked,
     }));
   } catch (error) {
-    if (!navigator.onLine) {
-      alert("Кажется, у вас сломался интернет, попробуйте позже");
-    } else {
-      alert("Сервер сломался, попробуй позже");
-    }
-    console.error("Ошибка при получении комментариев:", error);
+    alert("Ошибка загрузки комментариев");
     return [];
   }
 }
 
+export async function postComment(text) {
+  const token = localStorage.getItem("token");
+  if (!token) throw new Error("Нет авторизации");
 
-export async function postComment(author, text) {
   try {
     const response = await fetch(API_URL, {
       method: "POST",
-      body: JSON.stringify({ name: author, text, forceError: true }), 
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ text }),
     });
 
-    if (response.status === 400) {
-      alert("Имя и комментарий должны быть не короче 3 символов");
-      throw new Error("Ошибка 400: неверные данные");
-    }
-
-    if (response.status === 500) {
-      alert("Сервер сломался, попробуй позже");
-      throw new Error("Ошибка 500: сервер сломан");
-    }
-
-    if (!response.ok) {
-      throw new Error("Ошибка при добавлении комментария");
-    }
-
-    return { author, text, date: new Date().toLocaleString("ru-RU"), likes: 0, isLiked: false };
+    if (!response.ok) throw new Error("Ошибка добавления комментария");
+    return await fetchComments();
   } catch (error) {
-    if (!navigator.onLine) {
-      alert("Кажется, у вас сломался интернет, попробуйте позже");
-    }
-    console.error("Ошибка при добавлении комментария:", error);
-    return null;
+    alert("Ошибка добавления комментария");
+    return [];
   }
 }
 
+export async function login(login, password) {
+  return fetch(AUTH_URL + "/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ login, password }),
+  });
+}
+
+export async function registration(name, login, password) {
+  return fetch(AUTH_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, login, password }),
+  });
+}

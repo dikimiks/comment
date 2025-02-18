@@ -3,24 +3,52 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Проект "Комменты"</title>
+    <title>Проект "Комментарии"</title>
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <div class="container">
-      <p id="loading-message">Загрузка комментариев...</p> 
+      <p id="loading-message">Загрузка комментариев...</p>
+
       <ul class="comments" id="comments-list"></ul>
-    
-      <div class="add-form" id="add-form">
-        <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" />
+
+      <div class="add-form" id="add-form" style="display: none;">
+        <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" readonly />
         <textarea class="add-form-text" id="comment-input" placeholder="Введите ваш комментарий" rows="4"></textarea>
         <div class="add-form-row">
           <button class="add-form-button" id="add-comment-button">Написать</button>
         </div>
       </div>
-      <p id="comment-loading-message" style="display: none">Комментарий добавляется...</p> 
+
+      <p id="comment-loading-message" style="display: none;">Комментарий добавляется...</p>
+
+      <p id="auth-message" style="display: none;">
+        Чтобы добавить комментарий, <a href="#" id="auth-link">авторизуйтесь</a>.
+      </p>
+
+      <div class="auth-container" id="login-container" style="display: none;">
+        <h2 class="auth-title">Авторизация</h2>
+        <input type="text" class="auth-input" id="login-input" placeholder="Введите логин" />
+        <input type="password" class="auth-input" id="password-input" placeholder="Введите пароль" />
+        <div class="auth-buttons">
+          <button class="auth-button" id="login-button">Войти</button>
+          <button class="auth-button" id="register-link">Регистрация</button>
+        </div>
+        <p id="auth-error" class="error-message"></p>
+      </div>
+
+      <div class="auth-container" id="register-container" style="display: none;">
+        <h2 class="auth-title">Регистрация</h2>
+        <input type="text" class="auth-input" id="register-name" placeholder="Введите имя" />
+        <input type="text" class="auth-input" id="register-login" placeholder="Введите логин" />
+        <input type="password" class="auth-input" id="register-password" placeholder="Введите пароль" />
+        <div class="auth-buttons">
+          <button class="auth-button" id="register-button">Зарегистрироваться</button>
+          <button class="auth-button" id="back-to-login">Назад</button>
+        </div>
+        <p id="auth-error" class="error-message"></p>
+      </div>
     </div>
-    
 
     <script type="module" src="./js/main.js"></script>
   </body>

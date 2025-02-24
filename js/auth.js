@@ -10,6 +10,12 @@ export function getCurrentUser() {
   return currentUser;
 }
 
+export function setCurrentUser(user) {
+  currentUser = user;
+  localStorage.setItem("user", JSON.stringify(user));
+  localStorage.setItem("token", user.token);
+}
+
 export function checkAuth() {
   return localStorage.getItem("token") !== null;
 }

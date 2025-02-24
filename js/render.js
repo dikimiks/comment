@@ -30,6 +30,8 @@ export function renderComments() {
       `)
     .join("");
 
+    
+
   addLikeEventListeners();
   addReplyListeners();
   renderCommentForm();

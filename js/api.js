@@ -1,6 +1,6 @@
 const PERSONAL_KEY = "polina-rebrova";
 const API_URL = `https://wedev-api.sky.pro/api/v2/${PERSONAL_KEY}/comments`;
-const AUTH_URL = "https://wedev-api.sky.pro/api/v2//user";
+const AUTH_URL = "https://wedev-api.sky.pro/api/v2/user";
 
 export async function fetchComments() {
   try {
@@ -44,17 +44,33 @@ export async function postComment(text) {
 }
 
 export async function login(login, password) {
-  return fetch(AUTH_URL + "/login", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ login, password }),
-  });
+  try {
+    const response = await fetch(AUTH_URL + "/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ login, password }),
+    });
+
+    if (!response.ok) throw new Error("Ошибка авторизации");
+    return await response.json();
+  } catch (error) {
+    alert(error.message);
+    return null;
+  }
 }
 
 export async function registration(name, login, password) {
-  return fetch(AUTH_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, login, password }),
-  });
+  try {
+    const response = await fetch(AUTH_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, login, password }),
+    });
+
+    if (!response.ok) throw new Error("Ошибка регистрации");
+    return await response.json();
+  } catch (error) {
+    alert(error.message);
+    return null;
+  }
 }

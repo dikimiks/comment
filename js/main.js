@@ -1,18 +1,23 @@
 import { renderComments } from "./render.js";
-import { loadComments, comments } from "./comments.js";
+import { loadComments } from "./comments.js";
 import { checkAuth } from "./auth.js";
-import { showLoginForm, showRegisterForm } from "./render.js";
+import { renderLogin, showLoginForm } from "./renderLogin.js";
+import { renderRegisterForm, showRegisterForm } from "./renderRegister.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
   const authMessage = document.getElementById("auth-message");
   const authLink = document.getElementById("auth-link");
-  const commentsContainer = document.getElementById("comments-container");
+  const commentsList = document.getElementById("comments-list");
   const addForm = document.getElementById("add-form");
   const loginContainer = document.getElementById("login-container");
   const registerContainer = document.getElementById("register-container");
 
+
+
   await loadComments();
   renderComments();
+  renderLogin(); // Инициализация формы входа
+  renderRegisterForm(); // Инициализация формы регистрации
 
   if (checkAuth()) {
     showCommentsUI();
@@ -20,45 +25,46 @@ document.addEventListener("DOMContentLoaded", async () => {
     showAuthMessage();
   }
 
-  function showCommentsUI() {
-    if (!authMessage || !commentsContainer || !addForm || !loginContainer || !registerContainer) {
-      console.error("Ошибка: один из элементов не найден!");
-      return;
-    }
-    authMessage.style.display = "none";
-    loginContainer.style.display = "none";
-    registerContainer.style.display = "none";
-    commentsContainer.style.display = "block";
-    addForm.style.display = "block";
-  }
-
-  function showAuthMessage() {
-    if (!authMessage || !commentsContainer || !addForm || !loginContainer || !registerContainer) {
-      console.error("Ошибка: один из элементов не найден!");
-      return;
-    }
-    authMessage.style.display = "block";
-    commentsContainer.style.display = "block";
-    addForm.style.display = "none";
-    loginContainer.style.display = "none";
-    registerContainer.style.display = "none";
-  }
-
   if (authLink) {
     authLink.addEventListener("click", (event) => {
       event.preventDefault();
       showLoginForm();
     });
-  } else {
-    console.error("Ошибка: auth-link не найден!");
+  }
+
+  const registerLink = document.getElementById("register-link");
+  if (registerLink) {
+    registerLink.addEventListener("click", (event) => {
+      event.preventDefault();
+      showRegisterForm();
+    });
   }
 });
-  authLink.addEventListener("click", (event) => {
-    event.preventDefault();
-    showLoginForm();
-  });
 
-  registerLink.addEventListener("click", (event) => {
-    event.preventDefault();
-    showRegisterForm();
-  });
+// Функция для отображения сообщения о необходимости авторизации
+function showAuthMessage() {
+  const authMessage = document.getElementById("auth-message");
+  const commentsList = document.getElementById("comments-list");
+  const addForm = document.getElementById("add-form");
+  const registerContainer = document.getElementById("register-container");
+
+  if (authMessage) authMessage.style.display = "block";
+  if (commentsList) commentsList.style.display = "block";
+  if (addForm) addForm.style.display = "none";
+  if (registerContainer) registerContainer.style.display = "none";
+}
+
+// Функция для отображения интерфейса комментариев
+function showCommentsUI() {
+  const authMessage = document.getElementById("auth-message");
+  const commentsList = document.getElementById("comments-list");
+  const addForm = document.getElementById("add-form");
+  const loginContainer = document.getElementById("login-container");
+  const registerContainer = document.getElementById("register-container");
+
+  if (authMessage) authMessage.style.display = "none";
+  if (commentsList) commentsList.style.display = "block";
+  if (addForm) addForm.style.display = "block";
+  if (loginContainer) loginContainer.style.display = "none";
+  if (registerContainer) registerContainer.style.display = "none";
+}

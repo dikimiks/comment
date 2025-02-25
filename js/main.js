@@ -16,8 +16,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await loadComments();
   renderComments();
-  renderLogin(); // Инициализация формы входа
-  renderRegisterForm(); // Инициализация формы регистрации
+  renderLogin(); 
+  renderRegisterForm(); 
 
   if (checkAuth()) {
     showCommentsUI();

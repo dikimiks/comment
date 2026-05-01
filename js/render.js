@@ -1,7 +1,6 @@
 import { comments } from "./comments.js";
 import { addLikeEventListeners, addReplyListeners } from "./eventHandlers.js";
 import { getCurrentUser } from "./auth.js";
-import { showLoginForm } from "./renderLogin.js"; // ← импортируем из правильного файла
 
 export function renderComments() {
   const commentsList = document.getElementById("comments-list");
@@ -36,8 +35,8 @@ export function renderComments() {
   renderCommentForm();
 }
 
-export function renderCommentForm() {
-  const container = document.querySelector(".container");
+export function renderCommentForm() 
+{
   const user = getCurrentUser();
   const formContainer = document.getElementById("comment-form-container");
 
@@ -45,8 +44,8 @@ export function renderCommentForm() {
     formContainer.remove();
   }
 
-  const formHtml = user
-    ? `
+  if (user) {
+    const formHtml = `
       <div class="add-form" id="comment-form-container">
         <input type="text" class="add-form-name" value="${user.name}" readonly />
         <textarea class="add-form-text" id="comment-input" placeholder="Введите ваш комментарий" rows="4"></textarea>
@@ -54,21 +53,12 @@ export function renderCommentForm() {
           <button class="add-form-button" id="add-comment-button">Написать</button>
         </div>
       </div>
-      <p id="comment-loading-message" style="display: none">Комментарий добавляется...</p> 
-    `
-    : ""; // ← для неавторизованных не добавляем форму
-
-  if (formHtml) {
-    container.insertAdjacentHTML("beforeend", formHtml);
-  }
-
-  if (!user) {
-    const loginLink = document.getElementById("login-link");
-    if (loginLink) {
-      loginLink.addEventListener("click", (event) => {
-        event.preventDefault();
-        showLoginForm(); // ← теперь эта функция из renderLogin.js
-      });
+      <p id="comment-loading-message" style="display: none">Комментарий добавляется...</p>
+    `;
+    
+    const commentsList = document.getElementById("comments-list");
+    if (commentsList) {
+      commentsList.insertAdjacentHTML("afterend", formHtml);
     }
   }
 }

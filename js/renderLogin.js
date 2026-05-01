@@ -4,21 +4,17 @@ import { showRegisterForm } from "./renderRegister.js";
 import { renderComments } from "./render.js";
 
 export function renderLogin() {
-  const loginContainer = document.getElementById("login-container");
-  if (!loginContainer) return;
-
   const loginButton = document.getElementById("login-button");
   if (loginButton) {
     loginButton.addEventListener("click", async (event) => {
       event.preventDefault();
       const loginUser = document.getElementById("login-input").value;
       const passwordUser = document.getElementById("password-input").value;
-      
       try {
         const userData = await login(loginUser, passwordUser);
         if (userData) {
           setCurrentUser(userData.user);
-          showCommentsUI(); 
+          showCommentsUI();
         }
       } catch (error) {
         alert("Ошибка авторизации: " + error.message);
@@ -36,18 +32,30 @@ export function renderLogin() {
 }
 
 export function showLoginForm() {
-  document.getElementById("auth-message").style.display = "none";
-  document.getElementById("comments-list").style.display = "none";
-  document.getElementById("login-container").style.display = "block";
-  document.getElementById("register-container").style.display = "none";
-  document.getElementById("add-form").style.display = "none";
+  const authMessage = document.getElementById("auth-message");
+  const commentsList = document.getElementById("comments-list");
+  const addForm = document.getElementById("add-form");
+  const loginContainer = document.getElementById("login-container");
+  const registerContainer = document.getElementById("register-container");
+  
+  if (authMessage) authMessage.style.display = "none";
+  if (commentsList) commentsList.style.display = "none";
+  if (addForm) addForm.style.display = "none";
+  if (loginContainer) loginContainer.style.display = "block";
+  if (registerContainer) registerContainer.style.display = "none";
 }
 
 function showCommentsUI() {
-  document.getElementById("auth-message").style.display = "none";
-  document.getElementById("login-container").style.display = "none";
-  document.getElementById("register-container").style.display = "none";
-  document.getElementById("comments-list").style.display = "block";
-  document.getElementById("add-form").style.display = "block";
-  renderComments();
-}
+  const authMessage = document.getElementById("auth-message");
+  const commentsList = document.getElementById("comments-list");
+  const addForm = document.getElementById("add-form");
+  const loginContainer = document.getElementById("login-container");
+  const registerContainer = document.getElementById("register-container");
+  
+  if (authMessage) authMessage.style.display = "none";
+  if (commentsList) commentsList.style.display = "block";
+  if (addForm) addForm.style.display = "block";
+  if (loginContainer) loginContainer.style.display = "none";
+  if (registerContainer) registerContainer.style.display = "none";
+  
+  renderComments();}

@@ -1,7 +1,6 @@
 import { comments } from "./comments.js";
-export function renderComments() 
-{  const commentsList = document.getElementById("comments-list");
-
+export function renderComments() {
+  const commentsList = document.getElementById("comments-list");
   if (!commentsList) {
     console.error("comments-list не найден");
     return;
@@ -18,13 +17,8 @@ export function renderComments()
           <div class="comment-body">
             <div class="comment-text">${comment.text}</div>
           </div>
-          <div class="comment-footer">
-            <div class="likes">
-              <span class="likes-counter">${comment.likes}</span>
-              <button class="like-button ${comment.isLiked ? "-active-like" : ""}" data-index="${index}"></button>
-            </div>
-          </div>
-        </li>
+    </li>
       `
     )
-    .join("");}
+    .join("");
+}

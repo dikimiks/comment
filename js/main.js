@@ -1,7 +1,7 @@
 import { renderComments } from "./render.js";
 import { loadComments } from "./comments.js";
 import { checkAuth } from "./auth.js";
-import { renderLogin, showLoginForm } from "./renderLogin.js"; 
+import { renderLogin, showLoginForm } from "./renderLogin.js";
 import { renderRegisterForm } from "./renderRegister.js";
 
 document.addEventListener("DOMContentLoaded", async () => {
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (authLink) {
     authLink.addEventListener("click", (event) => {
       event.preventDefault();
-      showLoginForm(); 
+      showLoginForm();
     });
   }
 });
@@ -31,7 +31,7 @@ function showAuthMessage() {
   const addForm = document.getElementById("add-form");
   const loginContainer = document.getElementById("login-container");
   const registerContainer = document.getElementById("register-container");
-  
+
   if (authMessage) authMessage.style.display = "block";
   if (commentsList) commentsList.style.display = "block";
   if (addForm) addForm.style.display = "none";
@@ -45,9 +45,10 @@ function showCommentsUI() {
   const addForm = document.getElementById("add-form");
   const loginContainer = document.getElementById("login-container");
   const registerContainer = document.getElementById("register-container");
-  
+
   if (authMessage) authMessage.style.display = "none";
   if (commentsList) commentsList.style.display = "block";
   if (addForm) addForm.style.display = "block";
   if (loginContainer) loginContainer.style.display = "none";
-  if (registerContainer) registerContainer.style.display = "none";}
+  if (registerContainer) registerContainer.style.display = "none";
+}

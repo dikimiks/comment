@@ -1,6 +1,7 @@
 import { comments } from "./comments.js";
 import { addLikeEventListeners, addReplyListeners } from "./eventHandlers.js";
 import { getCurrentUser } from "./auth.js";
+import { showLoginForm } from "./renderLogin.js"; // ← импортируем из правильного файла
 
 export function renderComments() {
   const commentsList = document.getElementById("comments-list");
@@ -30,8 +31,6 @@ export function renderComments() {
       `)
     .join("");
 
-    
-
   addLikeEventListeners();
   addReplyListeners();
   renderCommentForm();
@@ -57,29 +56,19 @@ export function renderCommentForm() {
       </div>
       <p id="comment-loading-message" style="display: none">Комментарий добавляется...</p> 
     `
-    : `<p id="comment-form-container" class="login-message">Чтобы добавить комментарий, <a href="#" id="login-link">авторизуйтесь</a></p>`;
+    : ""; // ← для неавторизованных не добавляем форму
 
-  container.insertAdjacentHTML("beforeend", formHtml);
+  if (formHtml) {
+    container.insertAdjacentHTML("beforeend", formHtml);
+  }
 
   if (!user) {
-    document.getElementById("login-link").addEventListener("click", (event) => {
-      event.preventDefault();
-      showLoginForm();
-    });
+    const loginLink = document.getElementById("login-link");
+    if (loginLink) {
+      loginLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        showLoginForm(); // ← теперь эта функция из renderLogin.js
+      });
+    }
   }
-}
-
-
-export function showLoginForm() {
-  document.getElementById("auth-message").style.display = "none";
-  document.getElementById("comments-container").style.display = "none";
-  document.getElementById("login-container").style.display = "block";
-  document.getElementById("register-container").style.display = "none";
-}
-
-export function showRegisterForm() {
-  document.getElementById("auth-message").style.display = "none";
-  document.getElementById("comments-container").style.display = "none";
-  document.getElementById("login-container").style.display = "none";
-  document.getElementById("register-container").style.display = "block";
 }

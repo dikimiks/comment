@@ -1,23 +1,11 @@
 import { login } from "./api.js";
 import { setCurrentUser } from "./auth.js";
 import { showRegisterForm } from "./renderRegister.js";
-import { renderComments } from "./render.js"; // Импортируем функцию для отрисовки комментариев
+import { renderComments } from "./render.js";
 
-export const renderLogin = () => {
-  const container = document.querySelector(".container");
-  const elemLoginHTML = `
-    <div class="auth-container" id="login-container">
-      <h2 class="auth-title">Авторизация</h2>
-      <input type="text" class="auth-input" id="login-input" placeholder="Введите логин" />
-      <input type="password" class="auth-input" id="password-input" placeholder="Введите пароль" />
-      <div class="auth-buttons">
-        <button class="auth-button" id="login-button">Войти</button>
-        <button class="auth-button" id="register-link">Регистрация</button>
-      </div>
-      <p id="auth-error" class="error-message"></p>
-    </div>
-  `;
-  container.innerHTML = elemLoginHTML;
+export function renderLogin() {
+  const loginContainer = document.getElementById("login-container");
+  if (!loginContainer) return;
 
   const loginButton = document.getElementById("login-button");
   if (loginButton) {
@@ -25,12 +13,12 @@ export const renderLogin = () => {
       event.preventDefault();
       const loginUser = document.getElementById("login-input").value;
       const passwordUser = document.getElementById("password-input").value;
-
+      
       try {
         const userData = await login(loginUser, passwordUser);
         if (userData) {
-          setCurrentUser(userData.user); // Сохраняем данные пользователя
-          renderComments(); // Переходим к ленте комментариев
+          setCurrentUser(userData.user);
+          showCommentsUI(); 
         }
       } catch (error) {
         alert("Ошибка авторизации: " + error.message);
@@ -42,19 +30,24 @@ export const renderLogin = () => {
   if (registerLink) {
     registerLink.addEventListener("click", (event) => {
       event.preventDefault();
-      showRegisterForm(); // Переход к форме регистрации
+      showRegisterForm();
     });
   }
-};
+}
 
 export function showLoginForm() {
-  const authMessage = document.getElementById("auth-message");
-  const commentsList = document.getElementById("comments-list");
-  const loginContainer = document.getElementById("login-container");
-  const registerContainer = document.getElementById("register-container");
+  document.getElementById("auth-message").style.display = "none";
+  document.getElementById("comments-list").style.display = "none";
+  document.getElementById("login-container").style.display = "block";
+  document.getElementById("register-container").style.display = "none";
+  document.getElementById("add-form").style.display = "none";
+}
 
-  if (authMessage) authMessage.style.display = "none";
-  if (commentsList) commentsList.style.display = "none";
-  if (loginContainer) loginContainer.style.display = "block";
-  if (registerContainer) registerContainer.style.display = "none";
+function showCommentsUI() {
+  document.getElementById("auth-message").style.display = "none";
+  document.getElementById("login-container").style.display = "none";
+  document.getElementById("register-container").style.display = "none";
+  document.getElementById("comments-list").style.display = "block";
+  document.getElementById("add-form").style.display = "block";
+  renderComments();
 }

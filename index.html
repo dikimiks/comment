@@ -7,12 +7,11 @@
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <div class="container">
+    <div class="auth-container" id="login-container" style="display: none;">
       <p id="loading-message">Загрузка комментариев...</p>
-
-      <ul class="comments" id="comments-list">
-        
+      <ul class="comments" id="comments-list">        
       </ul>
+    </div>
 
       <div class="add-form" id="add-form" style="display: none;">
         <input type="text" class="add-form-name" id="name-input" placeholder="Введите ваше имя" readonly />
@@ -24,8 +23,8 @@
 
       <p id="comment-loading-message" style="display: none;">Комментарий добавляется...</p>
 
-      <p id="auth-message">
-        Чтобы добавить комментарий, <a href="#" id="auth-link">авторизуйтесь</a>.
+      <p id="auth-message" style="display: none;">
+  Чтобы добавить комментарий, <a href="#" id="auth-link">авторизуйтесь</a>.
       </p>
 
        <script type="module" src="./js/main.js"></script>

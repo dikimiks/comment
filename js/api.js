@@ -34,7 +34,7 @@ export async function postComment(text) {
       },
       body: JSON.stringify({ text }),
     });
-
+    
     if (!response.ok) throw new Error("Ошибка добавления комментария");
     return await fetchComments();
   } catch (error) {

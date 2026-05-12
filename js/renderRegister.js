@@ -1,61 +1,68 @@
 import { registration } from "./api.js";
 import { setCurrentUser } from "./auth.js";
-import { renderComments } from "./render.js";
-import { showLoginForm } from "./renderLogin.js";
+import { renderLoginForm } from "./renderLogin.js";
+import { loadComments } from "./comments.js";
+import { showCommentsUI } from "./main.js";
 
-export function renderRegisterForm() {
+export function showRegisterForm() {
+  const loginContainer = document.getElementById("login-container");
   const registerContainer = document.getElementById("register-container");
-  if (!registerContainer) return;
+
+  if (loginContainer) loginContainer.style.display = "none";
+  if (registerContainer) registerContainer.style.display = "block";
 
   const registerButton = document.getElementById("register-button");
   const backButton = document.getElementById("back-to-login");
+  const nameInput = document.getElementById("register-name");
+  const loginInput = document.getElementById("register-login");
+  const passwordInput = document.getElementById("register-password");
+  const errorElement = document.getElementById("register-error");
+
+  const handleRegister = async () => {
+    const name = nameInput?.value.trim();
+    const login = loginInput?.value.trim();
+    const password = passwordInput?.value;
+
+    if (!name || !login || !password) {
+      if (errorElement) errorElement.textContent = "Заполните все поля";
+      return;
+    }
+
+    if (name.length < 2) {
+      if (errorElement) errorElement.textContent = "Имя должно быть не короче 2 символов";
+      return;
+    }
+
+    if (password.length < 6) {
+      if (errorElement) errorElement.textContent = "Пароль должен быть не короче 6 символов";
+      return;
+    }
+
+    try {
+      const userData = await registration(name, login, password);
+      if (userData && userData.user) {
+        setCurrentUser(userData.user);
+        await loadComments();
+        showCommentsUI();
+        
+        const userNameInput = document.getElementById("name-input");
+        if (userNameInput) userNameInput.value = userData.user.name;
+      }
+    } catch (error) {
+      if (errorElement) errorElement.textContent = error.message;
+    }
+  };
 
   if (registerButton) {
-    registerButton.addEventListener("click", async (event) => {
-      event.preventDefault();
-      
-      const name = document.getElementById("register-name").value;
-      const login = document.getElementById("register-login").value;
-      const password = document.getElementById("register-password").value;
-
-      if (!name || !login || !password) {
-        alert("Пожалуйста, заполните все поля");
-        return;
-      }
-
-      try {
-        const userData = await registration(name, login, password);
-        if (userData) {
-          setCurrentUser(userData.user);
-          showCommentsUI();
-        }
-      } catch (error) {
-        alert("Ошибка регистрации: " + error.message);
-      }
-    });
+    registerButton.removeEventListener("click", handleRegister);
+    registerButton.addEventListener("click", handleRegister);
   }
 
   if (backButton) {
-    backButton.addEventListener("click", (event) => {
-      event.preventDefault();
-      showLoginForm();
+    backButton.removeEventListener("click", () => {});
+    backButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      renderLoginForm();
     });
   }
-}
-
-export function showRegisterForm() {
-  document.getElementById("auth-message").style.display = "none";
-  document.getElementById("comments-list").style.display = "none";
-  document.getElementById("login-container").style.display = "none";
-  document.getElementById("register-container").style.display = "block";
-  document.getElementById("add-form").style.display = "none";
-}
-
-function showCommentsUI() {
-  document.getElementById("auth-message").style.display = "none";
-  document.getElementById("login-container").style.display = "none";
-  document.getElementById("register-container").style.display = "none";
-  document.getElementById("comments-list").style.display = "block";
-  document.getElementById("add-form").style.display = "block";
-  renderComments();
 }

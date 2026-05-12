@@ -1,61 +1,72 @@
 import { login } from "./api.js";
 import { setCurrentUser } from "./auth.js";
 import { showRegisterForm } from "./renderRegister.js";
-import { renderComments } from "./render.js";
+import { loadComments } from "./comments.js";
+import { showCommentsUI } from "./main.js";
 
-export function renderLogin() {
-  const loginButton = document.getElementById("login-button");
-  if (loginButton) {
-    loginButton.addEventListener("click", async (event) => {
-      event.preventDefault();
-      const loginUser = document.getElementById("login-input").value;
-      const passwordUser = document.getElementById("password-input").value;
-      try {
-        const userData = await login(loginUser, passwordUser);
-        if (userData) {
-          setCurrentUser(userData.user);
-          showCommentsUI();
-        }
-      } catch (error) {
-        alert("Ошибка авторизации: " + error.message);
-      }
-    });
-  }
-
-  const registerLink = document.getElementById("register-link");
-  if (registerLink) {
-    registerLink.addEventListener("click", (event) => {
-      event.preventDefault();
-      showRegisterForm();
-    });
-  }
-}
-
-export function showLoginForm() {
+export function renderLoginForm() {
+  const loginContainer = document.getElementById("login-container");
+  const registerContainer = document.getElementById("register-container");
   const authMessage = document.getElementById("auth-message");
   const commentsList = document.getElementById("comments-list");
   const addForm = document.getElementById("add-form");
-  const loginContainer = document.getElementById("login-container");
-  const registerContainer = document.getElementById("register-container");
-  
+
   if (authMessage) authMessage.style.display = "none";
   if (commentsList) commentsList.style.display = "none";
   if (addForm) addForm.style.display = "none";
   if (loginContainer) loginContainer.style.display = "block";
   if (registerContainer) registerContainer.style.display = "none";
-}
 
-function showCommentsUI() {
-  const authMessage = document.getElementById("auth-message");
-  const commentsList = document.getElementById("comments-list");
-  const addForm = document.getElementById("add-form");
-  const loginContainer = document.getElementById("login-container");
-  const registerContainer = document.getElementById("register-container");
+  const loginButton = document.getElementById("login-button");
+  const registerLink = document.getElementById("register-link");
+  const loginInput = document.getElementById("login-input");
+  const passwordInput = document.getElementById("password-input");
+  const errorElement = document.getElementById("login-error");
+
+  const newLoginButton = loginButton.cloneNode(true);
+  const newRegisterLink = registerLink.cloneNode(true);
   
-  if (authMessage) authMessage.style.display = "none";
-  if (commentsList) commentsList.style.display = "block";
-  if (addForm) addForm.style.display = "block";
-  if (loginContainer) loginContainer.style.display = "none";
-  if (registerContainer) registerContainer.style.display = "none";
+  if (loginButton && loginButton.parentNode) {
+    loginButton.parentNode.replaceChild(newLoginButton, loginButton);
+  }
+  if (registerLink && registerLink.parentNode) {
+    registerLink.parentNode.replaceChild(newRegisterLink, registerLink);
+  }
+
+  const handleLogin = async () => {
+    const loginValue = loginInput?.value.trim();
+    const passwordValue = passwordInput?.value;
+
+    if (!loginValue || !passwordValue) {
+      if (errorElement) errorElement.textContent = "Заполните все поля";
+      return;
+    }
+
+    try {
+      const userData = await login(loginValue, passwordValue);
+      if (userData && userData.user) {
+        setCurrentUser(userData.user);
+        await loadComments();
+        showCommentsUI();
+        
+        const nameInput = document.getElementById("name-input");
+        if (nameInput) nameInput.value = userData.user.name;
+      }
+    } catch (error) {
+      if (errorElement) errorElement.textContent = error.message;
+    }
+  };
+
+  newLoginButton.addEventListener("click", handleLogin);
+  newRegisterLink.addEventListener("click", (e) => {
+    e.preventDefault();
+    showRegisterForm();
+  });
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") handleLogin();
+  };
   
-  renderComments();}
+  if (loginInput) loginInput.addEventListener("keypress", handleKeyPress);
+  if (passwordInput) passwordInput.addEventListener("keypress", handleKeyPress);
+}

@@ -1,45 +1,43 @@
 import { addComment, toggleLike } from "./comments.js";
 import { renderComments } from "./render.js";
 
-export function addEventListeners() {
+export function initEventHandlers() {
+  initAddCommentHandler();
+}
+
+
+export function initAddCommentHandler() {
   const addButton = document.getElementById("add-comment-button");
   const commentInput = document.getElementById("comment-input");
 
   if (!addButton || !commentInput) {
-    console.error("Ошибка: один из элементов формы не найден!");
+    console.error("Ошибка: элементы формы не найдены!");
     return;
   }
 
-  addButton.addEventListener("click", () => {
-    if (commentInput.value.trim()) {
-      addComment(commentInput.value.trim());
+
+  const newAddButton = addButton.cloneNode(true);
+  addButton.parentNode.replaceChild(newAddButton, addButton);
+
+  newAddButton.addEventListener("click", async () => {
+    const text = commentInput.value.trim();
+    if (text) {
+      await addComment(text);
       commentInput.value = "";
-      renderComments();
+    
+    } else {
+      alert("Введите текст комментария");
     }
   });
 }
 
-export function addLikeEventListeners() {
-  document.querySelectorAll(".like-button").forEach((button) => {
-    button.addEventListener("click", (event) => {
-      event.stopPropagation();
-      const commentIndex = event.target.dataset.index;
-      toggleLike(commentIndex);
-      renderComments();
-    });
-  });
+
+export function initLikeHandlers() {
+ 
+  console.log("Like handlers are now in render.js");
 }
 
-export function addReplyListeners() {
-  document.querySelectorAll(".comment").forEach((comment) => {
-    comment.addEventListener("click", (event) => {
-      if (event.target.classList.contains("like-button")) return;
-      const index = event.currentTarget.dataset.index;
-      const textInput = document.getElementById("comment-input");
+export function initReplyHandlers() {
 
-      if (comments[index]) {
-        textInput.value = `> ${comments[index].text}\n`;
-      }
-    });
-  });
+  console.log("Reply handlers are now in render.js");
 }

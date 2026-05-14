@@ -4,6 +4,7 @@ const PERSONAL_KEY = "polina-rebrova";
 const API_URL = `https://wedev-api.sky.pro/api/v2/${PERSONAL_KEY}/comments`;
 const AUTH_URL = "https://wedev-api.sky.pro/api/v2/user";
 
+
 async function handleUnauthorized(response) {
   if (response.status === 401) {
     logout();
@@ -46,7 +47,7 @@ export async function postComment(text) {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+        // ❌ Убрали Content-Type: "application/json"
       },
       body: JSON.stringify({ text }),
     });
@@ -76,7 +77,7 @@ export async function toggleLike(commentId) {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+  
       },
     });
 
@@ -95,7 +96,9 @@ export async function toggleLike(commentId) {
 export async function login(login, password) {
   const response = await fetch(`${AUTH_URL}/login`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+  
+    },
     body: JSON.stringify({ login, password }),
   });
   
@@ -110,7 +113,9 @@ export async function login(login, password) {
 export async function registration(name, login, password) {
   const response = await fetch(AUTH_URL, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+ 
+    },
     body: JSON.stringify({ name, login, password }),
   });
   

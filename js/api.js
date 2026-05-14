@@ -1,5 +1,6 @@
 import { logout } from "./auth.js";
 
+
 const PERSONAL_KEY = "polina-rebrova";
 const API_URL = `https://wedev-api.sky.pro/api/v2/${PERSONAL_KEY}/comments`;
 const AUTH_URL = "https://wedev-api.sky.pro/api/v2/user";
@@ -15,14 +16,34 @@ async function handleUnauthorized(response) {
   return response;
 }
 
+async function checkResponse(response) {
+  const contentType = response.headers.get("content-type");
+  
+
+  if (contentType && contentType.includes("text/html")) {
+    console.error("Сервер вернул HTML вместо JSON. URL:", response.url);
+    throw new Error(`Ошибка сервера: ${response.status} ${response.statusText}`);
+  }
+  
+  return response;
+}
+
 export async function fetchComments() {
   try {
+    console.log("Запрос к API:", API_URL);
+    
     const response = await fetch(API_URL);
+    await checkResponse(response);
     await handleUnauthorized(response);
     
-    if (!response.ok) throw new Error("Ошибка загрузки комментариев");
-
+    if (!response.ok) throw new Error(`Ошибка загрузки комментариев: ${response.status}`);
+    
     const data = await response.json();
+    
+    if (!data.comments || !Array.isArray(data.comments)) {
+      throw new Error("Неверный формат ответа от сервера");
+    }
+    
     return data.comments.map((comment) => ({
       id: comment.id,
       author: comment.author.name,
@@ -47,11 +68,11 @@ export async function postComment(text) {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-        // ❌ Убрали Content-Type: "application/json"
       },
       body: JSON.stringify({ text }),
     });
 
+    await checkResponse(response);
     await handleUnauthorized(response);
 
     if (response.status === 400) {
@@ -77,10 +98,10 @@ export async function toggleLike(commentId) {
       method: "POST",
       headers: {
         Authorization: `Bearer ${token}`,
-  
       },
     });
 
+    await checkResponse(response);
     await handleUnauthorized(response);
 
     if (!response.ok) throw new Error("Ошибка переключения лайка");
@@ -96,11 +117,10 @@ export async function toggleLike(commentId) {
 export async function login(login, password) {
   const response = await fetch(`${AUTH_URL}/login`, {
     method: "POST",
-    headers: {
-  
-    },
     body: JSON.stringify({ login, password }),
   });
+  
+  await checkResponse(response);
   
   if (!response.ok) {
     const error = await response.json();
@@ -113,11 +133,10 @@ export async function login(login, password) {
 export async function registration(name, login, password) {
   const response = await fetch(AUTH_URL, {
     method: "POST",
-    headers: {
- 
-    },
     body: JSON.stringify({ name, login, password }),
   });
+  
+  await checkResponse(response);
   
   if (!response.ok) {
     const error = await response.json();

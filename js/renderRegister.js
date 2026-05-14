@@ -1,68 +1,115 @@
 import { registration } from "./api.js";
 import { setCurrentUser } from "./auth.js";
 import { renderLoginForm } from "./renderLogin.js";
-import { loadComments } from "./comments.js";
-import { showCommentsUI } from "./main.js";
+import { init } from "./main.js";
+
+function clearContainer() {
+  const container = document.querySelector(".container");
+  if (!container) return;
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
+}
 
 export function showRegisterForm() {
-  const loginContainer = document.getElementById("login-container");
-  const registerContainer = document.getElementById("register-container");
+  const container = document.querySelector(".container");
+  if (!container) return;
+  
+  clearContainer();
+  
 
-  if (loginContainer) loginContainer.style.display = "none";
-  if (registerContainer) registerContainer.style.display = "block";
+  const registerContainer = document.createElement("div");
+  registerContainer.id = "register-container";
+  registerContainer.className = "auth-container";
+  
+  const title = document.createElement("h2");
+  title.className = "auth-title";
+  title.textContent = "Регистрация";
+  registerContainer.appendChild(title);
+  
 
-  const registerButton = document.getElementById("register-button");
-  const backButton = document.getElementById("back-to-login");
-  const nameInput = document.getElementById("register-name");
-  const loginInput = document.getElementById("register-login");
-  const passwordInput = document.getElementById("register-password");
-  const errorElement = document.getElementById("register-error");
-
+  const nameInput = document.createElement("input");
+  nameInput.type = "text";
+  nameInput.id = "register-name";
+  nameInput.className = "auth-input";
+  nameInput.placeholder = "Введите имя";
+  registerContainer.appendChild(nameInput);
+  
+ 
+  const loginInput = document.createElement("input");
+  loginInput.type = "text";
+  loginInput.id = "register-login";
+  loginInput.className = "auth-input";
+  loginInput.placeholder = "Введите логин";
+  registerContainer.appendChild(loginInput);
+  
+ 
+  const passwordInput = document.createElement("input");
+  passwordInput.type = "password";
+  passwordInput.id = "register-password";
+  passwordInput.className = "auth-input";
+  passwordInput.placeholder = "Введите пароль";
+  registerContainer.appendChild(passwordInput);
+  
+ 
+  const buttonsDiv = document.createElement("div");
+  buttonsDiv.className = "auth-buttons";
+  
+  const registerButton = document.createElement("button");
+  registerButton.id = "register-button";
+  registerButton.className = "auth-button";
+  registerButton.textContent = "Зарегистрироваться";
+  
+  const backButton = document.createElement("button");
+  backButton.id = "back-to-login";
+  backButton.className = "auth-button";
+  backButton.textContent = "Назад";
+  
+  buttonsDiv.appendChild(registerButton);
+  buttonsDiv.appendChild(backButton);
+  registerContainer.appendChild(buttonsDiv);
+  
+  const errorElement = document.createElement("p");
+  errorElement.id = "register-error";
+  errorElement.className = "error-message";
+  registerContainer.appendChild(errorElement);
+  
+  container.appendChild(registerContainer);
+  
   const handleRegister = async () => {
-    const name = nameInput?.value.trim();
-    const login = loginInput?.value.trim();
-    const password = passwordInput?.value;
-
+    const name = nameInput.value.trim();
+    const login = loginInput.value.trim();
+    const password = passwordInput.value;
+    
     if (!name || !login || !password) {
-      if (errorElement) errorElement.textContent = "Заполните все поля";
+      errorElement.textContent = "Заполните все поля";
       return;
     }
-
+    
     if (name.length < 2) {
-      if (errorElement) errorElement.textContent = "Имя должно быть не короче 2 символов";
+      errorElement.textContent = "Имя должно быть не короче 2 символов";
       return;
     }
-
+    
     if (password.length < 6) {
-      if (errorElement) errorElement.textContent = "Пароль должен быть не короче 6 символов";
+      errorElement.textContent = "Пароль должен быть не короче 6 символов";
       return;
     }
-
+    
     try {
       const userData = await registration(name, login, password);
       if (userData && userData.user) {
         setCurrentUser(userData.user);
-        await loadComments();
-        showCommentsUI();
-        
-        const userNameInput = document.getElementById("name-input");
-        if (userNameInput) userNameInput.value = userData.user.name;
+        await init(); 
       }
     } catch (error) {
-      if (errorElement) errorElement.textContent = error.message;
+      errorElement.textContent = error.message;
     }
   };
-
-  if (registerButton) {
-    registerButton.removeEventListener("click", handleRegister);
-    registerButton.addEventListener("click", handleRegister);
-  }
-
-  if (backButton) {
-    backButton.removeEventListener("click", () => {});
-    backButton.addEventListener("click", (e) => {
-      e.preventDefault();
-      renderLoginForm();
-    });
-  }
+  
+  registerButton.addEventListener("click", handleRegister);
+  backButton.addEventListener("click", (e) => {
+    e.preventDefault();
+    renderLoginForm();
+  });
 }

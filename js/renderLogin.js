@@ -1,72 +1,108 @@
 import { login } from "./api.js";
 import { setCurrentUser } from "./auth.js";
 import { showRegisterForm } from "./renderRegister.js";
-import { loadComments } from "./comments.js";
-import { showCommentsUI } from "./main.js";
+import { init } from "./main.js";
+
+let container = null;
+
+function clearContainer() {
+  const container = document.querySelector(".container");
+  if (!container) return;
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
+}
 
 export function renderLoginForm() {
-  const loginContainer = document.getElementById("login-container");
-  const registerContainer = document.getElementById("register-container");
-  const authMessage = document.getElementById("auth-message");
-  const commentsList = document.getElementById("comments-list");
-  const addForm = document.getElementById("add-form");
-
-  if (authMessage) authMessage.style.display = "none";
-  if (commentsList) commentsList.style.display = "none";
-  if (addForm) addForm.style.display = "none";
-  if (loginContainer) loginContainer.style.display = "block";
-  if (registerContainer) registerContainer.style.display = "none";
-
-  const loginButton = document.getElementById("login-button");
-  const registerLink = document.getElementById("register-link");
-  const loginInput = document.getElementById("login-input");
-  const passwordInput = document.getElementById("password-input");
-  const errorElement = document.getElementById("login-error");
-
-  const newLoginButton = loginButton.cloneNode(true);
-  const newRegisterLink = registerLink.cloneNode(true);
+  container = document.querySelector(".container");
+  if (!container) return;
   
-  if (loginButton && loginButton.parentNode) {
-    loginButton.parentNode.replaceChild(newLoginButton, loginButton);
-  }
-  if (registerLink && registerLink.parentNode) {
-    registerLink.parentNode.replaceChild(newRegisterLink, registerLink);
-  }
-
+  clearContainer();
+  
+  
+  const loginContainer = document.createElement("div");
+  loginContainer.id = "login-container";
+  loginContainer.className = "auth-container";
+  
+ 
+  const title = document.createElement("h2");
+  title.className = "auth-title";
+  title.textContent = "Авторизация";
+  loginContainer.appendChild(title);
+  
+ 
+  const loginInput = document.createElement("input");
+  loginInput.type = "text";
+  loginInput.id = "login-input";
+  loginInput.className = "auth-input";
+  loginInput.placeholder = "Введите логин";
+  loginContainer.appendChild(loginInput);
+  
+  
+  const passwordInput = document.createElement("input");
+  passwordInput.type = "password";
+  passwordInput.id = "password-input";
+  passwordInput.className = "auth-input";
+  passwordInput.placeholder = "Введите пароль";
+  loginContainer.appendChild(passwordInput);
+  
+ 
+  const buttonsDiv = document.createElement("div");
+  buttonsDiv.className = "auth-buttons";
+  
+  const loginButton = document.createElement("button");
+  loginButton.id = "login-button";
+  loginButton.className = "auth-button";
+  loginButton.textContent = "Войти";
+  
+  const registerLink = document.createElement("button");
+  registerLink.id = "register-link";
+  registerLink.className = "auth-button";
+  registerLink.textContent = "Регистрация";
+  
+  buttonsDiv.appendChild(loginButton);
+  buttonsDiv.appendChild(registerLink);
+  loginContainer.appendChild(buttonsDiv);
+  
+ 
+  const errorElement = document.createElement("p");
+  errorElement.id = "login-error";
+  errorElement.className = "error-message";
+  loginContainer.appendChild(errorElement);
+  
+  container.appendChild(loginContainer);
+  
   const handleLogin = async () => {
-    const loginValue = loginInput?.value.trim();
-    const passwordValue = passwordInput?.value;
-
+    const loginValue = loginInput.value.trim();
+    const passwordValue = passwordInput.value;
+    
     if (!loginValue || !passwordValue) {
-      if (errorElement) errorElement.textContent = "Заполните все поля";
+      errorElement.textContent = "Заполните все поля";
       return;
     }
-
+    
     try {
       const userData = await login(loginValue, passwordValue);
       if (userData && userData.user) {
         setCurrentUser(userData.user);
-        await loadComments();
-        showCommentsUI();
-        
-        const nameInput = document.getElementById("name-input");
-        if (nameInput) nameInput.value = userData.user.name;
+        await init(); 
       }
     } catch (error) {
-      if (errorElement) errorElement.textContent = error.message;
+      errorElement.textContent = error.message;
     }
   };
-
-  newLoginButton.addEventListener("click", handleLogin);
-  newRegisterLink.addEventListener("click", (e) => {
+  
+  loginButton.addEventListener("click", handleLogin);
+  registerLink.addEventListener("click", (e) => {
     e.preventDefault();
     showRegisterForm();
   });
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") handleLogin();
-  };
   
-  if (loginInput) loginInput.addEventListener("keypress", handleKeyPress);
-  if (passwordInput) passwordInput.addEventListener("keypress", handleKeyPress);
+  loginInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") handleLogin();
+  });
+  
+  passwordInput.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") handleLogin();
+  });
 }

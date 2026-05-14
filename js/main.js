@@ -1,68 +1,111 @@
-import { loadComments, addComment } from "./comments.js";
+import { loadComments } from "./comments.js";
 import { renderComments } from "./render.js";
 import { checkAuth, getCurrentUser } from "./auth.js";
 import { renderLoginForm } from "./renderLogin.js";
-import { initEventHandlers } from "./eventHandlers.js";
+import { renderAddForm } from "./renderAddForm.js";
+
+let container = null;
+let loadingMessage = null;
+
+function initContainer() {
+  container = document.querySelector(".container");
+  if (!container) {
+    console.error("Container not found");
+    return false;
+  }
+  return true;
+}
+
+function showLoading() {
+  loadingMessage = document.createElement("p");
+  loadingMessage.id = "loading-message";
+  loadingMessage.textContent = "Загрузка комментариев...";
+  container.appendChild(loadingMessage);
+}
+
+function hideLoading() {
+  if (loadingMessage && loadingMessage.parentNode) {
+    loadingMessage.remove();
+  }
+}
+
+function clearContainer() {
+  while (container.firstChild) {
+    container.removeChild(container.firstChild);
+  }
+}
 
 export function showCommentsUI() {
-  const authMessage = document.getElementById("auth-message");
-  const commentsList = document.getElementById("comments-list");
-  const addForm = document.getElementById("add-form");
-  const loginContainer = document.getElementById("login-container");
-  const registerContainer = document.getElementById("register-container");
+  if (!container) return;
+  
+  clearContainer();
 
-  if (authMessage) authMessage.style.display = "none";
-  if (commentsList) commentsList.style.display = "block";
-  if (addForm) addForm.style.display = "block";
-  if (loginContainer) loginContainer.style.display = "none";
-  if (registerContainer) registerContainer.style.display = "none";
-
- 
-  const user = getCurrentUser();
-  const nameInput = document.getElementById("name-input");
-  if (nameInput && user) {
-    nameInput.value = user.name;
-  }
+  const commentsList = document.createElement("ul");
+  commentsList.id = "comments-list";
+  commentsList.className = "comments";
+  container.appendChild(commentsList);
+  
+  
+  renderComments();
   
  
-  initEventHandlers();
+  renderAddForm();
 }
 
 function showAuthMessage() {
-  const authMessage = document.getElementById("auth-message");
-  const commentsList = document.getElementById("comments-list");
-  const addForm = document.getElementById("add-form");
-  const loginContainer = document.getElementById("login-container");
-  const registerContainer = document.getElementById("register-container");
-
-  if (authMessage) authMessage.style.display = "block";
-  if (commentsList) commentsList.style.display = "block";
-  if (addForm) addForm.style.display = "none";
-  if (loginContainer) loginContainer.style.display = "none";
-  if (registerContainer) registerContainer.style.display = "none";
+  if (!container) return;
+  
+  clearContainer();
+  
+  
+  const commentsList = document.createElement("ul");
+  commentsList.id = "comments-list";
+  commentsList.className = "comments";
+  container.appendChild(commentsList);
+  
+  
+  renderComments();
+  
+ 
+  const authMessage = document.createElement("p");
+  authMessage.id = "auth-message";
+  authMessage.style.display = "block";
+  authMessage.style.marginTop = "20px";
+  authMessage.style.textAlign = "center";
+  
+  const authLink = document.createElement("a");
+  authLink.href = "#";
+  authLink.id = "auth-link";
+  authLink.className = "link-login";
+  authLink.textContent = "авторизуйтесь";
+  
+  authMessage.appendChild(document.createTextNode("Чтобы добавить комментарий, "));
+  authMessage.appendChild(authLink);
+  
+  container.appendChild(authMessage);
+  
+ 
+  authLink.addEventListener("click", (event) => {
+    event.preventDefault();
+    renderLoginForm();
+  });
 }
 
-async function init() {
+export async function init() {
+  if (!initContainer()) return;
+  
+  showLoading();
+  
   await loadComments();
-  renderComments();
-
+  
+  hideLoading();
+  
   if (checkAuth()) {
     showCommentsUI();
   } else {
     showAuthMessage();
   }
-
-  const authLink = document.getElementById("auth-link");
-  if (authLink) {
-  
-    const newAuthLink = authLink.cloneNode(true);
-    authLink.parentNode.replaceChild(newAuthLink, authLink);
-    
-    newAuthLink.addEventListener("click", (event) => {
-      event.preventDefault();
-      renderLoginForm();
-    });
-  }
 }
+
 
 document.addEventListener("DOMContentLoaded", init);

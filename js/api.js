@@ -3,7 +3,7 @@ import { logout } from "./auth.js";
 
 const PERSONAL_KEY = "polina-rebrova";
 const API_URL = `https://wedev-api.sky.pro/api/v2/${PERSONAL_KEY}/comments`;
-const AUTH_URL = "https://wedev-api.sky.pro/api/v2/user";
+const USER_API_URL = "https://wedev-api.sky.pro/api/user";
 
 
 async function handleUnauthorized(response) {
@@ -115,32 +115,40 @@ export async function toggleLike(commentId) {
 }
 
 export async function login(login, password) {
-  const response = await fetch(`${AUTH_URL}/login`, {
+  const response = await fetch(`${USER_API_URL}/login`, { 
     method: "POST",
     body: JSON.stringify({ login, password }),
   });
   
   await checkResponse(response);
   
-  if (!response.ok) {
+  if (response.status === 400) {
     const error = await response.json();
-    throw new Error(error.error || "Ошибка авторизации");
+    throw new Error(error.error || "Неправильный логин или пароль");
+  }
+  
+  if (!response.ok) {
+    throw new Error("Ошибка авторизации");
   }
   
   return response.json();
 }
 
 export async function registration(name, login, password) {
-  const response = await fetch(AUTH_URL, {
+  const response = await fetch(USER_API_URL, { 
     method: "POST",
     body: JSON.stringify({ name, login, password }),
   });
   
   await checkResponse(response);
   
-  if (!response.ok) {
+  if (response.status === 400) {
     const error = await response.json();
-    throw new Error(error.error || "Ошибка регистрации");
+    throw new Error(error.error || "Пользователь с таким логином уже существует");
+  }
+  
+  if (!response.ok) {
+    throw new Error("Ошибка регистрации");
   }
   
   return response.json();

@@ -59,18 +59,14 @@ export async function handleToggleLike(commentId, index) {
   const user = getCurrentUser();
   if (!user) {
     alert("Авторизуйтесь, чтобы ставить лайки!");
-    return;
+    return null;
   }
 
   try {
     const result = await toggleLike(commentId);
-    if (result) {
-      comments[index].likes = result.likes;
-      comments[index].isLiked = result.isLiked;
-      renderComments();
-    }
+    return result;
   } catch (error) {
     console.error("Ошибка при установке лайка:", error);
-    alert("Ошибка при установке лайка");
+    throw error;
   }
 }

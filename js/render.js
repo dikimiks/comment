@@ -46,7 +46,7 @@ function createCommentElement(comment, index) {
   header.appendChild(author);
   header.appendChild(date);
 
-
+  
   const body = document.createElement("div");
   body.className = "comment-body";
 
@@ -56,7 +56,7 @@ function createCommentElement(comment, index) {
 
   body.appendChild(text);
 
- 
+  
   const footer = document.createElement("div");
   footer.className = "comment-footer";
 
@@ -69,15 +69,63 @@ function createCommentElement(comment, index) {
 
   const likeButton = document.createElement("button");
   likeButton.className = "like-button";
-  if (comment.isLiked) {
+  
+  if (comment.isLiked === true) {
     likeButton.classList.add("liked");
   }
   likeButton.dataset.id = comment.id;
   likeButton.dataset.index = index;
 
+ 
   likeButton.addEventListener("click", async (event) => {
     event.stopPropagation();
-    await handleToggleLike(comment.id, index);
+    event.preventDefault();
+    
+   
+    const wasLiked = comment.isLiked;
+    const newIsLiked = !wasLiked;
+    const newLikes = newIsLiked ? comment.likes + 1 : comment.likes - 1;
+    
+    
+    comment.isLiked = newIsLiked;
+    comment.likes = newLikes;
+    likesCounter.textContent = newLikes;
+    if (newIsLiked) {
+      likeButton.classList.add("liked");
+    } else {
+      likeButton.classList.remove("liked");
+    }
+    
+    
+    try {
+      const result = await handleToggleLike(comment.id, index);
+     
+      if (result && result.likes !== undefined) {
+        if (comment.likes !== result.likes) {
+          comment.likes = result.likes;
+          likesCounter.textContent = result.likes;
+        }
+        if (comment.isLiked !== result.isLiked) {
+          comment.isLiked = result.isLiked;
+          if (result.isLiked) {
+            likeButton.classList.add("liked");
+          } else {
+            likeButton.classList.remove("liked");
+          }
+        }
+      }
+    } catch (error) {
+     
+      comment.isLiked = wasLiked;
+      comment.likes = wasLiked ? comment.likes + 1 : comment.likes - 1;
+      likesCounter.textContent = comment.likes;
+      if (wasLiked) {
+        likeButton.classList.add("liked");
+      } else {
+        likeButton.classList.remove("liked");
+      }
+      alert("Ошибка при установке лайка");
+    }
   });
 
   likesContainer.appendChild(likesCounter);

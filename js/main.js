@@ -96,15 +96,16 @@ export async function init() {
   
   showLoading();
   
-  await loadComments();
+    if (checkAuth()) {
+    showCommentsUI();    
+  } else {
+    showAuthMessage();   
+  }
+  
+ 
+  await loadComments()
   
   hideLoading();
-  
-  if (checkAuth()) {
-    showCommentsUI();
-  } else {
-    showAuthMessage();
-  }
 }
 
 

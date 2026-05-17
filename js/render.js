@@ -8,7 +8,6 @@ export function renderComments() {
     return;
   }
 
- 
   while (commentsList.firstChild) {
     commentsList.removeChild(commentsList.firstChild);
   }
@@ -21,14 +20,13 @@ export function renderComments() {
     return;
   }
 
-
   comments.forEach((comment, index) => {
     const commentItem = createCommentElement(comment, index);
     commentsList.appendChild(commentItem);
   });
 }
 
-export function createCommentElement(comment, index) {
+function createCommentElement(comment, index) {
   const li = document.createElement("li");
   li.className = "comment";
   li.dataset.index = index;
@@ -70,11 +68,13 @@ export function createCommentElement(comment, index) {
   likesCounter.textContent = comment.likes;
 
   const likeButton = document.createElement("button");
-  likeButton.className = `like-button ${comment.isLiked ? "liked" : ""}`;
+  likeButton.className = "like-button";
+  if (comment.isLiked) {
+    likeButton.classList.add("liked");
+  }
   likeButton.dataset.id = comment.id;
   likeButton.dataset.index = index;
-  
-  
+
   likeButton.addEventListener("click", async (event) => {
     event.stopPropagation();
     await handleToggleLike(comment.id, index);
@@ -84,11 +84,8 @@ export function createCommentElement(comment, index) {
   likesContainer.appendChild(likeButton);
   footer.appendChild(likesContainer);
 
- 
   li.addEventListener("click", (event) => {
-   
     if (event.target.classList.contains("like-button")) return;
-    
     const commentInput = document.getElementById("comment-input");
     if (commentInput) {
       commentInput.value = `> ${comment.text}\n\n`;

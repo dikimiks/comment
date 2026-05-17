@@ -70,6 +70,7 @@ export async function handleToggleLike(commentId, index) {
       renderComments();
     }
   } catch (error) {
+    console.error("Ошибка при установке лайка:", error);
     alert("Ошибка при установке лайка");
   }
 }

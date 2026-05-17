@@ -113,27 +113,6 @@ export async function toggleLike(commentId) {
     throw error;
   }
 }
-
-export async function login(login, password) {
-  const response = await fetch(`${USER_API_URL}/login`, { 
-    method: "POST",
-    body: JSON.stringify({ login, password }),
-  });
-  
-  await checkResponse(response);
-  
-  if (response.status === 400) {
-    const error = await response.json();
-    throw new Error(error.error || "Неправильный логин или пароль");
-  }
-  
-  if (!response.ok) {
-    throw new Error("Ошибка авторизации");
-  }
-  
-  return response.json();
-}
-
 export async function registration(name, login, password) {
   const response = await fetch(USER_API_URL, { 
     method: "POST",
